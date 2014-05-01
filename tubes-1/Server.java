@@ -29,6 +29,9 @@ public class Server extends Thread {
 					recv_commands = P.recv();
 					if (recv_commands.equals("quit")) P.send("server quits");
 					else P.send(operateDatabase(recv_commands,P));
+					System.out.println("DEBUG : "+recv_commands);
+	
+					if (recv_commands.equals("NULL")) break; //fault tolerance
 				}	
 
 				server.close(); //jika sudah quit maka tutup
@@ -40,7 +43,7 @@ public class Server extends Thread {
 			}catch (IOException e) {
 				e.printStackTrace();
 				break;
-			}
+			} catch (Exception e) { System.out.println("test"); }
 		}
 	}
 

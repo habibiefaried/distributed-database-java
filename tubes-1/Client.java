@@ -5,10 +5,10 @@ import java.util.*;
 public class Client {
 	private Protokol P;
 
-	public Client() {
+	public Client(String S) {
 		try {
 			String command="";
-			Socket client = new Socket("127.0.0.1", 2014);
+			Socket client = new Socket(S, 2014);
 			System.out.println("Terhubung ke server : " + client.getRemoteSocketAddress());
 
 			P = new Protokol(client);

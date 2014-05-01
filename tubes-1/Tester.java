@@ -28,7 +28,9 @@ public class Tester {
 			Server S = new Server();
 			S.start();
 		} else if (a == 2) {
-			Client C = new Client();
+			reader.nextLine();
+			System.out.println("IP Target : "); String IP = reader.nextLine();
+			Client C = new Client(IP);
 		}
 	}
 }
