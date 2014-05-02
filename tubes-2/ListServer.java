@@ -4,8 +4,8 @@ import java.util.*;
 
 class ServerData {
 
-	private static Protokol P;
-	private static int Token;
+	private Protokol P;
+	private int Token;
 
 	public ServerData(Protokol _P, int _T) {
 		P = _P;

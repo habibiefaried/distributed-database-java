@@ -8,6 +8,7 @@ import java.util.*;
 public class trackers extends Thread {
 	private ServerSocket serverSocket;
 	private Protokol P;
+	private maximum_data = 10; //hanya bisa menyimpan 10 data biar keliatan
 
 	public trackers(ServerSocket S) {
 		this.serverSocket = S;

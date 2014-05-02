@@ -4,13 +4,11 @@ import java.util.*;
 
 public class trackerc {
 	private Protokol P;
-	private Struktur S;
 	private String ID; //ID server berupa hash
 
 	public trackerc (String IP) {
+		new Struktur();
 		try {
-			S = new Struktur();
-
 			String command="";
 			Socket client = new Socket(IP, 2014);
 
@@ -40,23 +38,23 @@ public class trackerc {
 		if (commands.get(0).equals("create")) {
 			if (commands.size() != 3) return "FALSE-COMMAND"; //command tidak sesuai
 			else {
-				if (S.createTable(commands.get(2))) return "OK"; //berhasil
+				if (Struktur.createTable(commands.get(2))) return "OK"; //berhasil
 				else return "FALSE-EXISTS"; //sudah exists
 			}
 		} else if (commands.get(0).equals("insert")) {
 			if (commands.size() != 4) return "FALSE-COMMAND"; //command tidak sesuai
 			else {
-				if (S.insertData(commands.get(1),commands.get(2),commands.get(3))) return "OK"; //OK
+				if (Struktur.insertData(commands.get(1),commands.get(2),commands.get(3))) return "OK"; //OK
 				else return "FALSE-NO-TABLE/KEY-NOT-VALID"; //tidak ada tabel atau key invalid ( > 0)
 			}		
 		}
 		else if (commands.get(0).equals("display")) {
 			if (commands.size() != 2) return "FALSE-COMMAND"; //salah command
-			else { P.sendRepeatMessage(S.getAllDataFromTableStr(commands.get(1),false)); return "OK"; } //ambil data dari tabel
+			else { P.sendRepeatMessage(Struktur.getAllDataFromTableStr(commands.get(1),false)); return "OK"; } //ambil data dari tabel
 		}
 		else if (commands.get(0).equals("display_all")) {
 			if (commands.size() != 2) return "FALSE-COMMAND"; //salah command
-			else { P.sendRepeatMessage(S.getAllDataFromTableStr(commands.get(1),true)); return "OK"; } //ambil data dari tabel
+			else { P.sendRepeatMessage(Struktur.getAllDataFromTableStr(commands.get(1),true)); return "OK"; } //ambil data dari tabel
 		}
 		else return "FALSE";
 	}
