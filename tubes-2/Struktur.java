@@ -8,9 +8,9 @@ import java.sql.Timestamp;
 import java.util.Date;
 
 public class Struktur {	
-	private static Hashtable<String,ArrayList<Data>> database; //key : table, value : Data
+	private Hashtable<String,ArrayList<Data>> database; //key : table, value : Data
 
-	private static void replaceKeyExists(String table,String Key) {
+	private void replaceKeyExists(String table,String Key) {
 		ArrayList<Data> db = getAllDataFromTable(table);
 		if (db == null) {}
 		else {
@@ -24,7 +24,7 @@ public class Struktur {
 		database  = new Hashtable<String,ArrayList<Data>>();
 	}
 
-	public static boolean createTable(String table) {
+	public boolean createTable(String table) {
 		//jangan lupa nanti divalidasi
 		if (database.get(table) == null) {
 			ArrayList<Data> D = new ArrayList<Data>();
@@ -36,7 +36,7 @@ public class Struktur {
 		else return false;
 	}
 
-	public static boolean insertData(String table, String Key, String Value) {
+	public boolean insertData(String table, String Key, String Value) {
 		ArrayList<Data> D = database.get(table);
 		if (Key.equals("0")) return false;
 		else {
@@ -50,12 +50,12 @@ public class Struktur {
 		}
 	}
 
-	public static ArrayList<Data> getAllDataFromTable(String table) {
+	public ArrayList<Data> getAllDataFromTable(String table) {
 		//System.out.println("Contents : "+database.get(table));
 		return database.get(table);
 	}
 
-	public static ArrayList<String> getAllDataFromTableStr(String table, boolean print_all) {
+	public ArrayList<String> getAllDataFromTableStr(String table, boolean print_all) {
 		ArrayList<Data> db = getAllDataFromTable(table);
 		if (db == null) return null;
 		else {

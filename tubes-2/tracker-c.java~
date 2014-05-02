@@ -1,0 +1,27 @@
+import java.net.*;
+import java.io.*;
+import java.util.*;
+
+public class tracker-c {
+	private Protokol P;
+	private Struktur S;
+	private String ID; //ID server berupa hash
+
+	public tracker-c (String IP) {
+		S = new Struktur();
+		ID = 0; //digenerate dari server
+
+		String command="";
+		Socket client = new Socket(IP, 2014);
+
+		System.out.println("Terhubung ke server : " + client.getRemoteSocketAddress());
+		P = new Protokol(client);
+		P.send("server"); //konfirmasi terlebih dahulu
+		ID = P.recv();
+		logging(ID); 
+	}
+
+	private void logging(String logs) {
+		System.out.println("[DEBUG] "+logs);
+	}
+}

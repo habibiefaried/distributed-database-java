@@ -1,0 +1,30 @@
+import java.net.*;
+import java.io.*;
+import java.util.*;
+
+//Disini ada 2 jenis thread :
+// thread_client & thread_server
+
+public class tracker-s extends Thread {
+	private ServerSocket serverSocket;
+	private Protokol P;
+	private jml_server;
+
+	public tracker-s(ServerSocket S) {
+		this.serverSocket = S;
+		P = new Protokol();
+		jml_server = 0;
+	}
+	
+	public void run() {
+		String data; String command;
+		Socket server = serverSocket.accept();
+		P = new Protokol(server);
+
+		if (P.recv().equals("client")) {
+			
+		} else if (P.recv().equals("server")) {
+			P.send("1u0090aishhdh21");
+		} else P.send("apa ini?");
+	}
+}

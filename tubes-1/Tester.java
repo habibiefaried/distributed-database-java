@@ -1,8 +1,9 @@
+import java.net.*;
+import java.io.*;
 import java.util.*;
 
-public class Tester {
-	private	static Struktur S;
 
+public class Tester {
 	public static void printTest(ArrayList<Data> D) {
 		Iterator<Data> it = D.iterator();
 		while(it.hasNext())
@@ -24,9 +25,13 @@ public class Tester {
 		Scanner reader = new Scanner(System.in);
 		System.out.println("1. Server, 2. Client");
 		System.out.print("Silahkan masukkan kode mode program diatas : "); int a = reader.nextInt();
+		int i=1;
 		if (a == 1) {
-			Server S = new Server();
-			S.start();
+			new Struktur();
+			try {
+				ServerSocket serverSocket = new ServerSocket(2014);
+				while (i<=1000) {new Server(serverSocket).start(); i++;}
+			}catch (Exception e){e.printStackTrace();}
 		} else if (a == 2) {
 			reader.nextLine();
 			System.out.println("IP Target : "); String IP = reader.nextLine();
