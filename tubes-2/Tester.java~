@@ -2,12 +2,7 @@ import java.net.*;
 import java.io.*;
 import java.util.*;
 
-/* Cara kerja server2 :
-	1) Ketika konek, lakukan registrasi server ke ListServer dan lakukan migrasi (apabila perlu)
-	2) Saat pembagian data, siapapun boleh mulai dari server 1 .. n
-	3) disimpan, sebuah tabel dan data disimpan dimana saja itu dicatat (yang dicatat adalah id server (mulai dari 0))
-	4) Saat data sebuah tabel akan diambil, buka hashmap diatas untuk pencarian id server. karena cuma display_all, lakukan concatenasi
-	5) Concatenasi berhasil, kirim balik ke client */
+/* Pake algoritma nosql distributed database, metode ring server*/
 
 public class Tester {
 	private	static Struktur S;
@@ -31,7 +26,7 @@ public class Tester {
 		printTest(S.getAllDataFromTable("ghabibie"));
 		*/
 		Scanner reader = new Scanner(System.in);
-		System.out.println("1. Server, 2. Server Tambahan, 3. Client");
+		System.out.println("1. NameNode, 2. DataNode, 3. Client");
 		System.out.print("Silahkan masukkan kode mode program diatas : "); int a = reader.nextInt();
 		if (a == 1) {
 			try {
@@ -50,7 +45,9 @@ public class Tester {
 			System.out.print("IP Address server : "); String IP = reader.nextLine();
 			new trackerc(IP);
 		} else if (a == 3) {
-
+			reader.nextLine();
+			System.out.print("IP Address server : "); String IP = reader.nextLine();
+			Client C = new Client(IP);
 		}
 	}
 }

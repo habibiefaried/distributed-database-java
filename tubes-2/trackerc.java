@@ -3,8 +3,9 @@ import java.io.*;
 import java.util.*;
 
 public class trackerc {
+//Ini merupakan datanode
 	private Protokol P;
-	private String ID; //ID server berupa hash
+	private Integer ID; //ID server berupa hash
 
 	public trackerc (String IP) {
 		new Struktur();
@@ -15,12 +16,17 @@ public class trackerc {
 			System.out.println("Terhubung ke server : " + client.getRemoteSocketAddress());
 			P = new Protokol(client);
 			P.send("server"); //konfirmasi terlebih dahulu
-			ID = P.recv();
-			logging(ID); 
+			ID = Integer.parseInt(P.recv());
+			logging(ID.toString()); 
 
 			while (true) {
+				//Idealnya gk pernah keluar dari sini
 				command = P.recv(); //menunggu command terus2an
+				P.send(operateDatabase(command,P));
+				if (command.equals("NULL")) break;
 			}
+			System.out.println("Nah loh, error :v");
+
 		} catch (Exception e) {e.printStackTrace();}
 	}
 
