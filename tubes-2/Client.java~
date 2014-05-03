@@ -18,6 +18,7 @@ public class Client {
 			String data = P.recv();
 			if (data.equals("NO-DATANODE")) System.out.println("Tidak ada datanode yang sedang aktif, tidak bisa melayani permintaan anda");
 			else {
+				System.out.println(data);
 				while (!command.equals("quit")) {
 					System.out.print("lolSql> "); command = reader.nextLine();
 					P.send(command);

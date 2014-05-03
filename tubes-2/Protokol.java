@@ -10,6 +10,9 @@ public class Protokol {
 		this.So = null;
 	}
 
+	public String getRemoteSocketAddress(){return So.getRemoteSocketAddress().toString();}
+	public int getPort(){return So.getPort();}
+
 	public Protokol(Socket so) {
 		this.So = so;
 	}

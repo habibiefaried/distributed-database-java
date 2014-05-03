@@ -70,6 +70,21 @@ public class Struktur {
 			return hasil;
 		}
 	}
+
+	public static boolean isExists(String key, String table) {
+		ArrayList<Data> db = getAllDataFromTable(table);
+		if (db == null) {
+			System.out.println("[NULL] masuk sini?");
+			return false;
+		}
+		else {
+			System.out.println("debug : "+key+"-"+table);
+			for (int i = 0; i < db.size(); i++) {
+				if (db.get(i).Key.equals(key)) return true;
+			}
+			return false;
+		}
+	}
 }
 
 class Data {
@@ -77,6 +92,7 @@ class Data {
 	public String Value;
 	public String TimeStamp;
 	public boolean isPrint; //jika true maka akan ditampilkan, jika false maka tidak akan di print
+	public int Token;
 
 	private String currentTimeStamp() {
 		java.util.Date date= new java.util.Date();

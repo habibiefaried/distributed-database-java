@@ -61,6 +61,9 @@ public class trackerc {
 		else if (commands.get(0).equals("display_all")) {
 			if (commands.size() != 2) return "FALSE-COMMAND"; //salah command
 			else { P.sendRepeatMessage(Struktur.getAllDataFromTableStr(commands.get(1),true)); return "OK"; } //ambil data dari tabel
+		} else if (commands.get(0).equals("isExists")) {
+			if (Struktur.isExists(commands.get(1),commands.get(2))) return "TRUE";
+			else return "FALSE";
 		}
 		else return "FALSE";
 	}
