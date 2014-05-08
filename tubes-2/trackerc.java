@@ -40,7 +40,10 @@ public class trackerc {
 		for (String retval: command.split(" ",4)){
 			commands.add(retval);
 		}
-	
+		
+		//Testing only
+		//Struktur.getAllTable();		
+				
 		if (commands.get(0).equals("create")) {
 			if (commands.size() != 3) return "FALSE-COMMAND"; //command tidak sesuai
 			else {
@@ -64,7 +67,10 @@ public class trackerc {
 		} else if (commands.get(0).equals("isExists")) {
 			if (Struktur.isExists(commands.get(1),commands.get(2))) return "TRUE";
 			else return "FALSE";
+		} else if (commands.get(0).equals("DATABASE")) {
+			P.sendRepeatMessage(Struktur.getAllTable()); //kirim semua tabel
+			return "";
 		}
-		else return "FALSE";
+		else return "COMMAND-NOT-RECOGNIZED";
 	}
 }

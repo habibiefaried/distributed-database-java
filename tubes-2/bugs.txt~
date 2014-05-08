@@ -6,7 +6,7 @@
 
 Status :
 1) UDAH
-2) BELUM
+2) UDAH
 3) UDAH
 4) BELUM
 
@@ -18,4 +18,11 @@ Strategi migrasi
 4) Cek semua token, apakah sudah sesuai dengan pool_server
 5) Jika data sesuai, diamkan saja
 6) Jika data tidak sesuai, maka delete data tersebut. kirimkan ke namenode
-7) Setelah data sampai name
+7) Setelah data sampai namenode, lakukan storeDataDecision kembali untuk data token tersebut sesuai dengan max_pool_server
+8) Dapat, kirimkan data ke server yang benar
+
+Internal Command :
+1) DATABASE GET -> get all database
+
+--->
+Jika anda menemukan teks ini. berarti checkpoint dari tubes ini adalah commit sebelum ini (karena ini masih error itu fault tolerance & detection)

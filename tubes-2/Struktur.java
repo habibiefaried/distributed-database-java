@@ -85,6 +85,17 @@ public class Struktur {
 			return false;
 		}
 	}
+
+	public static ArrayList<String> getAllTable() {
+		ArrayList<String> ret = new ArrayList<String>();
+		Enumeration<String> enumKey = database.keys();
+		while(enumKey.hasMoreElements()) {
+			String keyElm = enumKey.nextElement();
+			System.out.println(keyElm);
+			ret.add(keyElm);
+		}
+		return ret;
+	}
 }
 
 class Data {

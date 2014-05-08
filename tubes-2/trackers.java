@@ -16,6 +16,11 @@ public class trackers extends Thread {
 	private int maximum_data = 10; //hanya bisa menyimpan 10 data biar keliatan
 	private ArrayList<Integer> usedToken;
 
+	private void debugList(ArrayList<String> AS) {
+		for (int i=0;i<AS.size();i++) 
+			System.out.println(AS.get(i));
+	}
+
 	public trackers(ServerSocket S) {
 		this.serverSocket = S;
 		P = new Protokol();
@@ -43,9 +48,34 @@ public class trackers extends Thread {
 				System.out.println("Terhubung ke client : " + server.getRemoteSocketAddress());
 				P.send(ListServer.getTop().toString()); //kirim jumlah server as ID
 				ListServer.addServer(P,ListServer.getTop()); //disimpan juga dalam database
+				
+				CopyAllTableTo(P); //copy semua table
+				
 			} else P.send("apa ini?");
 
 		}catch (Exception e) { e.printStackTrace(); }
+	}
+
+	private void CopyAllTableTo(Protokol newServer) {
+		ArrayList<String> alltable = new ArrayList<String>();
+		/* Ambil semua tabel */
+		for (int i=0;i<ListServer.getJmlServer()-1;i++) { //server terakhir merupakan server listener
+			Protokol P = ListServer.getProtokolServer(i);
+			P.send("DATABASE GET");
+			if (P.recv().equals("REPEAT")) {
+				ArrayList<String> resp = P.repeatedRecv();
+				alltable.addAll(resp);
+			}
+		}
+		debugList(alltable);
+		
+		/* Copy semua tabel ke server baru */
+		for (int i=0;i<alltable.size();i++) {
+			newServer.send("create table "+alltable.get(i)); //send command
+			String ok = newServer.recv();
+			System.out.println("Table Copy debug : "+ok);
+		}
+		//return alltable;
 	}
 
 	private int getRandomToken() {
@@ -119,8 +149,8 @@ public class trackers extends Thread {
 				if (reply.equals("NULL")) { //fault detection
 					System.out.println("Disconnect msg from datanode-"+server_decision);
 					ListServer.deleteServer(server_decision); //menghapus dari daftar list server
-					Client.send("Maaf, terjadi sebuah masalah. silahkan masukan query anda kembali");
-						
+					Client.send("Error detected. Fixing...");
+					operateClientCommand(command,Client);
 				}
 				else {
 					Client.send(reply); //meneruskan ke client
