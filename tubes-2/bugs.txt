@@ -1,0 +1,22 @@
+1) jika isinya display atau display_all doang (error)
+2) klo udah nambah2in tabel. terus masukin data juga udah.
+   Kalau nambah server, tabel tidak dideteksi (karena belum ada <0,0,0>)
+3) Fault tolerance & avoidance (kalau ada server dc)
+4) Migrasi data (kalau ada server nambah)
+
+Status :
+1) UDAH
+2) BELUM
+3) UDAH
+4) BELUM
+
+Strategi migrasi
+
+1) getAllDatabase dari salah satu server saja()
+2) create table terus2an untuk datanode yang baru
+3) kirim max_pool_server ke datanode
+4) Cek semua token, apakah sudah sesuai dengan pool_server
+5) Jika data sesuai, diamkan saja
+6) Jika data tidak sesuai, maka delete data tersebut. kirimkan ke namenode
+7) Setelah data sampai namenode, lakukan storeDataDecision kembali untuk data token tersebut sesuai dengan max_pool_server
+8) Dapat, kirimkan data ke server yang benar

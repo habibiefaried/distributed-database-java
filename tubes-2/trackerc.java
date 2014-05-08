@@ -25,7 +25,7 @@ public class trackerc {
 				P.send(operateDatabase(command,P));
 				if (command.equals("NULL")) break;
 			}
-			System.out.println("Nah loh, error :v");
+			System.out.println("Terputus dengan namenode server");
 
 		} catch (Exception e) {e.printStackTrace();}
 	}

@@ -31,4 +31,5 @@ public class ListServer {
 	public static Protokol getProtokolServer(int i){return SD.get(i).P;}
 
 	public static Integer getTop(){return top;}
+	public static void deleteServer(int i){SD.remove(i);}
 }

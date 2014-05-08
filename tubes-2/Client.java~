@@ -23,13 +23,16 @@ public class Client {
 					System.out.print("lolSql> "); command = reader.nextLine();
 					P.send(command);
 					String response = P.recv();
-					if (response.equals("REPEAT")) {
-						ArrayList<String> resp = P.repeatedRecv();
-						for (int i = 0; i < resp.size(); i++) {
-							System.out.println(resp.get(i));
-						}
-						System.out.println(P.recv());
-					}else System.out.println(response);
+					if (response.equals("NULL")) {System.out.println("Anda terputus dengan database server"); break;}
+					else {
+						if (response.equals("REPEAT")) {
+							ArrayList<String> resp = P.repeatedRecv();
+							for (int i = 0; i < resp.size(); i++) {
+								System.out.println(resp.get(i));
+							}
+							System.out.println(P.recv());
+						}else System.out.println(response);
+					}
 				}
 			}
 		}catch (Exception e) {e.printStackTrace();}

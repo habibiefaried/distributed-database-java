@@ -95,67 +95,107 @@ public class trackers extends Thread {
 				Protokol P = ListServer.getProtokolServer(i); //ambil protokol
 				P.send(command); //send command
 				String ok = P.recv();
-				if (!ok.equals("OK")) { isOK = false; error = ok;}
+				if (!ok.equals("NULL")) { //fault detection
+					if (!ok.equals("OK")) { isOK = false; error = ok;} 
+				}else System.out.println("Disconnect msg from datanode-"+i);
 			}
 			if (isOK) Client.send("OK");
 			else Client.send(error);
 
-		} else if (commands.get(0).equals("insert")) {
-			int token_data = getRandomToken();
-			int server_decision;
-			int isDataExists = this.checkDataExists(commands.get(2), commands.get(1));
+		} else if (commands.get(0).equals("insert")) { //fault detection disini udah
+			if (commands.size() != 4) Client.send("FALSE-COMMAND");
+			else {
+				int token_data = getRandomToken();
+				int server_decision;
+				int isDataExists = this.checkDataExists(commands.get(2), commands.get(1));
 
-			if (isDataExists == -1) server_decision = storeDataDecision(token_data);
-			else server_decision = isDataExists;
+				if (isDataExists == -1) server_decision = storeDataDecision(token_data);
+				else server_decision = isDataExists;
 
-			Protokol P = ListServer.getProtokolServer(server_decision);
-			P.send(command); //send command
-			String reply = P.recv();
-			Client.send(reply); //meneruskan ke client
+				Protokol P = ListServer.getProtokolServer(server_decision);
+				P.send(command); //send command
+				String reply = P.recv();
 
-			if (reply.equals("OK") && (isDataExists==-1)) usedToken.add(token_data); //jika data ok dan bukan query update, tambahin di list
+				if (reply.equals("NULL")) { //fault detection
+					System.out.println("Disconnect msg from datanode-"+server_decision);
+					ListServer.deleteServer(server_decision); //menghapus dari daftar list server
+					Client.send("Maaf, terjadi sebuah masalah. silahkan masukan query anda kembali");
+						
+				}
+				else {
+					Client.send(reply); //meneruskan ke client
+					if (reply.equals("OK") && (isDataExists==-1)) usedToken.add(token_data); //jika data ok dan bukan query update, tambahin di list
 
-			System.out.println("Data disimpan di : "+server_decision);
+					System.out.println("Data disimpan di : "+server_decision);
+				}
+			}
 
 		} else if (commands.get(0).equals("display")) {
-			ArrayList<String> allResp = new ArrayList<String>();
-			for (int i = 0; i < ListServer.getJmlServer(); i++) {
-				Protokol P = ListServer.getProtokolServer(i); //ambil protokol
-				P.send(command); //send command	
-				String rp = P.recv(); //permintaan repeat (PASTI)
-				ArrayList<String> resp = P.repeatedRecv();
-				allResp.addAll(resp);
-				System.out.println(P.recv());
+			if (commands.size() != 2){
+				 Client.sendRepeatMessage(new ArrayList<String>()); // Isi string kosong
+				 Client.send("FALSE-COMMAND");
 			}
-			Client.sendRepeatMessage(allResp); //meneruskan ke client
-			Client.send("DONE"); //meneruskan ke client
+			else {
+				ArrayList<String> allResp = new ArrayList<String>();
+				for (int i = 0; i < ListServer.getJmlServer(); i++) {
+					Protokol P = ListServer.getProtokolServer(i); //ambil protokol
+					P.send(command); //send command	
+					String rp = P.recv(); //permintaan repeat (PASTI)
+					if (rp.equals("NULL")) { //fault detection
+						System.out.println("Disconnect msg from datanode-"+i);
+						//ListServer.deleteServer(server_decision); //menghapus dari daftar list server					
+					}
+					else {
+						ArrayList<String> resp = P.repeatedRecv();
+						allResp.addAll(resp);
+						System.out.println(P.recv());
+					}
+				}
+				Client.sendRepeatMessage(allResp); //meneruskan ke client
+				Client.send("DONE"); //meneruskan ke client
+			}
 
 		} else if (commands.get(0).equals("display_all")) {
-			ArrayList<String> allResp = new ArrayList<String>();
-			for (int i = 0; i < ListServer.getJmlServer(); i++) {
-				Protokol P = ListServer.getProtokolServer(i); //ambil protokol
-				P.send(command); //send command	
-				String rp = P.recv(); //permintaan repeat (PASTI)
-				ArrayList<String> resp = P.repeatedRecv();
-				if (resp.size() != 0) resp.add("Data diatas dari IP : "+P.getRemoteSocketAddress());
-				allResp.addAll(resp);
-				System.out.println(P.recv());
+			if (commands.size() != 2){
+				 Client.sendRepeatMessage(new ArrayList<String>()); // Isi string kosong
+				 Client.send("FALSE-COMMAND");
 			}
-			Client.sendRepeatMessage(allResp); //meneruskan ke client
-			Client.send("DONE"); //meneruskan ke client
-
+			else {
+				ArrayList<String> allResp = new ArrayList<String>();
+				for (int i = 0; i < ListServer.getJmlServer(); i++) {
+					Protokol P = ListServer.getProtokolServer(i); //ambil protokol
+					P.send(command); //send command	
+					String rp = P.recv(); //permintaan repeat (PASTI)
+					if (rp.equals("NULL")) { //fault detection
+						System.out.println("Disconnect msg from datanode-"+i);
+						//ListServer.deleteServer(server_decision); //menghapus dari daftar list server					
+					} else {
+						ArrayList<String> resp = P.repeatedRecv();
+						if (resp.size() != 0) resp.add("Data diatas dari IP : "+P.getRemoteSocketAddress());
+						allResp.addAll(resp);
+						System.out.println(P.recv());
+					}
+				}
+				Client.sendRepeatMessage(allResp); //meneruskan ke client
+				Client.send("DONE"); //meneruskan ke client
+			}
 		} else Client.send("False Command");
 	}
 
 	private int checkDataExists(String key, String table) {
 		//mengembalikan id server yang memiliki data yang sama
 		//mengembalikan -1 apabila tidak ada server yang memiliki data tsb
+		System.out.println(ListServer.getJmlServer());
 		for (int i = 0; i < ListServer.getJmlServer(); i++) {
+			
 			Protokol P = ListServer.getProtokolServer(i);
 			P.send("isExists "+key+" "+table);
 			String re = P.recv();
-			System.out.println("Reply : "+re+". Data = "+key+"-"+table);
-			if (re.equals("TRUE")) return i; //jika ada maka mengembalikan id server
+			if (re.equals("NULL")) System.out.println("Disconnect msg from datanode-"+i); //fault detection
+			else {
+				System.out.println("Reply : "+re+". Data = "+key+"-"+table);
+				if (re.equals("TRUE")) return i; //jika ada maka mengembalikan id server
+			}
 		}
 		return -1;
 	}
