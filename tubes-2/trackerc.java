@@ -36,13 +36,10 @@ public class trackerc {
 
 	private String operateDatabase(String command, Protokol P) {
 		ArrayList<String> commands = new ArrayList<String>();
-		System.out.println("Client> "+command);
-		for (String retval: command.split(" ",4)){
+		System.out.println("DataNode> "+command);
+		for (String retval: command.split(" ",5)){
 			commands.add(retval);
-		}
-		
-		//Testing only
-		//Struktur.getAllTable();		
+		}	
 				
 		if (commands.get(0).equals("create")) {
 			if (commands.size() != 3) return "FALSE-COMMAND"; //command tidak sesuai
@@ -51,9 +48,9 @@ public class trackerc {
 				else return "FALSE-EXISTS"; //sudah exists
 			}
 		} else if (commands.get(0).equals("insert")) {
-			if (commands.size() != 4) return "FALSE-COMMAND"; //command tidak sesuai
+			if (commands.size() != 5) return "FALSE-COMMAND"; //command tidak sesuai
 			else {
-				if (Struktur.insertData(commands.get(1),commands.get(2),commands.get(3))) return "OK"; //OK
+				if (Struktur.insertData(commands.get(1),commands.get(2),commands.get(3),Integer.parseInt(commands.get(4)))) return "OK"; //OK
 				else return "FALSE-NO-TABLE/KEY-NOT-VALID"; //tidak ada tabel atau key invalid ( > 0)
 			}		
 		}
@@ -70,6 +67,9 @@ public class trackerc {
 		} else if (commands.get(0).equals("DATABASE")) {
 			P.sendRepeatMessage(Struktur.getAllTable()); //kirim semua tabel
 			return "";
+		} else if (commands.get(0).equals("DATA")) {
+			P.sendMigrateData(Struktur.getCorrespondData(Integer.parseInt(commands.get(1)),Integer.parseInt(commands.get(2))));
+			return "OK";
 		}
 		else return "COMMAND-NOT-RECOGNIZED";
 	}

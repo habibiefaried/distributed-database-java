@@ -5,7 +5,9 @@ import java.util.*;
 public class Client {
 	private Protokol P;
 
-	public Client(String S) {
+	public Client(String S, boolean debug_mode) {
+		new TestingUnit();
+		int currentUnit = 0;
 		try {
 			String command="";
 			Socket client = new Socket(S, 2014);
@@ -20,7 +22,13 @@ public class Client {
 			else {
 				System.out.println(data);
 				while (!command.equals("quit")) {
-					System.out.print("lolSql> "); command = reader.nextLine();
+					
+					if ((debug_mode) && (currentUnit < TestingUnit.unitTest.size())) {
+						System.out.println("lolSqlTester> "+TestingUnit.unitTest.get(currentUnit));
+						command = TestingUnit.unitTest.get(currentUnit);
+						currentUnit++;
+					}else { System.out.print("lolSql> "); command = reader.nextLine(); }
+
 					P.send(command);
 					String response = P.recv();
 					if (response.equals("NULL")) {System.out.println("Anda terputus dengan database server"); break;}
@@ -30,7 +38,6 @@ public class Client {
 							for (int i = 0; i < resp.size(); i++) {
 								System.out.println(resp.get(i));
 							}
-							System.out.println(P.recv());
 						}else System.out.println(response);
 					}
 				}

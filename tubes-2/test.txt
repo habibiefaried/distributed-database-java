@@ -1,0 +1,12 @@
+create table habibie
+insert habibie 001 data2
+insert habibie 004 data3
+insert habibie 012 habibie
+insert habibie 014 lol
+create table lol
+insert lol 007 data9
+insert lol 001 data6
+insert lol 004 data2
+insert lol 002 data1
+display_all habibie
+display_all lol

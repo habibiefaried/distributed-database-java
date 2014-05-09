@@ -50,10 +50,25 @@ public class trackers extends Thread {
 				ListServer.addServer(P,ListServer.getTop()); //disimpan juga dalam database
 				
 				CopyAllTableTo(P); //copy semua table
+
+				/* Saatnya restrukturisasi data */
+				moveDataTo(P); //pindahkan beberapa data ke server baru
 				
 			} else P.send("apa ini?");
 
 		}catch (Exception e) { e.printStackTrace(); }
+	}
+
+	private void moveDataTo(Protokol newServer) {
+		ArrayList<MigrateData> md = new ArrayList<MigrateData>();
+		for (int i=0;i<ListServer.getJmlServer()-1;i++) { //server terakhir merupakan server listener
+			Protokol P = ListServer.getProtokolServer(i);	
+			int pool_server = (Integer) (maximum_data / ListServer.getJmlServer()); //misal maximum_data 10, jml server = 2. maka masing-masing nampung 5	
+			P.send("DATA "+i+" "+pool_server);
+			md.addAll(P.recvMigrateData()); //tambahin semua data
+			System.out.println("[MoveDataTo Debug] Iterate :)");
+		}
+		System.out.println("[MoveDataTo Debug] Ini pesan berhasil :)");
 	}
 
 	private void CopyAllTableTo(Protokol newServer) {
@@ -62,10 +77,8 @@ public class trackers extends Thread {
 		for (int i=0;i<ListServer.getJmlServer()-1;i++) { //server terakhir merupakan server listener
 			Protokol P = ListServer.getProtokolServer(i);
 			P.send("DATABASE GET");
-			if (P.recv().equals("REPEAT")) {
-				ArrayList<String> resp = P.repeatedRecv();
-				alltable.addAll(resp);
-			}
+			ArrayList<String> resp = P.repeatedRecv();
+			alltable.addAll(resp);
 		}
 		debugList(alltable);
 		
@@ -75,7 +88,7 @@ public class trackers extends Thread {
 			String ok = newServer.recv();
 			System.out.println("Table Copy debug : "+ok);
 		}
-		//return alltable;
+		System.out.println("[DEBUG CopyAllTableTo] Selesai");
 	}
 
 	private int getRandomToken() {
@@ -112,7 +125,7 @@ public class trackers extends Thread {
 	private void operateClientCommand(String command, Protokol Client) {
 		//Disini semua operasi client dikerjakan.
 		ArrayList<String> commands = new ArrayList<String>();
-		System.out.println("Client> "+command);
+		System.out.println("NameNode> "+command);
 		for (String retval: command.split(" ",4)){
 			commands.add(retval);
 		}
@@ -143,13 +156,12 @@ public class trackers extends Thread {
 				else server_decision = isDataExists;
 
 				Protokol P = ListServer.getProtokolServer(server_decision);
-				P.send(command); //send command
+				P.send(command+" "+token_data); //send command, token diambil
 				String reply = P.recv();
 
 				if (reply.equals("NULL")) { //fault detection
 					System.out.println("Disconnect msg from datanode-"+server_decision);
 					ListServer.deleteServer(server_decision); //menghapus dari daftar list server
-					Client.send("Error detected. Fixing...");
 					operateClientCommand(command,Client);
 				}
 				else {
@@ -162,52 +174,48 @@ public class trackers extends Thread {
 
 		} else if (commands.get(0).equals("display")) {
 			if (commands.size() != 2){
+				 Client.send("REPEAT");
 				 Client.sendRepeatMessage(new ArrayList<String>()); // Isi string kosong
-				 Client.send("FALSE-COMMAND");
+				 //Client.send("FALSE-COMMAND");
 			}
 			else {
 				ArrayList<String> allResp = new ArrayList<String>();
 				for (int i = 0; i < ListServer.getJmlServer(); i++) {
 					Protokol P = ListServer.getProtokolServer(i); //ambil protokol
-					P.send(command); //send command	
-					String rp = P.recv(); //permintaan repeat (PASTI)
-					if (rp.equals("NULL")) { //fault detection
-						System.out.println("Disconnect msg from datanode-"+i);
-						//ListServer.deleteServer(server_decision); //menghapus dari daftar list server					
-					}
-					else {
-						ArrayList<String> resp = P.repeatedRecv();
-						allResp.addAll(resp);
-						System.out.println(P.recv());
-					}
+					P.send(command); //send command
+					System.out.println("LOL");
+					ArrayList<String> resp = P.repeatedRecv();
+					System.out.println("LOL Selesai");
+					allResp.addAll(resp);
+					System.out.println(P.recv()); //terima data tambahan doang
 				}
+				Client.send("REPEAT");
 				Client.sendRepeatMessage(allResp); //meneruskan ke client
-				Client.send("DONE"); //meneruskan ke client
+				//Client.send("DONE"); //meneruskan ke client
+				System.out.println("[DEBUG Trackers] Selesai mengirimkan display ke user");
 			}
 
 		} else if (commands.get(0).equals("display_all")) {
 			if (commands.size() != 2){
+				 Client.send("REPEAT");
 				 Client.sendRepeatMessage(new ArrayList<String>()); // Isi string kosong
-				 Client.send("FALSE-COMMAND");
+				 //Client.send("FALSE-COMMAND");
 			}
 			else {
 				ArrayList<String> allResp = new ArrayList<String>();
 				for (int i = 0; i < ListServer.getJmlServer(); i++) {
 					Protokol P = ListServer.getProtokolServer(i); //ambil protokol
 					P.send(command); //send command	
-					String rp = P.recv(); //permintaan repeat (PASTI)
-					if (rp.equals("NULL")) { //fault detection
-						System.out.println("Disconnect msg from datanode-"+i);
-						//ListServer.deleteServer(server_decision); //menghapus dari daftar list server					
-					} else {
-						ArrayList<String> resp = P.repeatedRecv();
-						if (resp.size() != 0) resp.add("Data diatas dari IP : "+P.getRemoteSocketAddress());
-						allResp.addAll(resp);
-						System.out.println(P.recv());
-					}
+
+					ArrayList<String> resp = P.repeatedRecv();
+					if (resp.size() != 0) resp.add("Data diatas dari IP : "+P.getRemoteSocketAddress());
+					allResp.addAll(resp);
+					System.out.println(P.recv()); //terima data tambahan doang
 				}
+				Client.send("REPEAT");
 				Client.sendRepeatMessage(allResp); //meneruskan ke client
-				Client.send("DONE"); //meneruskan ke client
+				//Client.send("DONE"); //meneruskan ke client
+				System.out.println("[DEBUG Trackers] Selesai mengirimkan display ke user");
 			}
 		} else Client.send("False Command");
 	}

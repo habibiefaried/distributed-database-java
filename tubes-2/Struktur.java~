@@ -36,14 +36,14 @@ public class Struktur {
 		else return false;
 	}
 
-	public static boolean insertData(String table, String Key, String Value) {
+	public static boolean insertData(String table, String Key, String Value,int Token) {
 		ArrayList<Data> D = database.get(table);
 		if (Key.equals("0")) return false;
 		else {
 			if (D == null) return false; //masih tidak ada table
 			else {
 				replaceKeyExists(table,Key); //coba kalo ada key doble
-				D.add(new Data(Key,Value));
+				D.add(new Data(Key,Value,Token));
 				database.put(table,D);
 				return true;
 			}
@@ -59,9 +59,10 @@ public class Struktur {
 		ArrayList<Data> db = getAllDataFromTable(table);
 		if (db == null) return null;
 		else {
+			System.out.println("[DEBUG getAllDataFromTableStr()] Terpanggil : "+db.size());
 			ArrayList<String> hasil = new ArrayList<String>();
 			for (int i = 0; i < db.size(); i++) {
-				if (print_all) hasil.add(db.get(i).getData());
+				if (print_all) hasil.add(db.get(i).getAllData());
 				else {
 					if (db.get(i).isPrint) hasil.add(db.get(i).getData());
 					else {} //No print
@@ -96,6 +97,31 @@ public class Struktur {
 		}
 		return ret;
 	}
+
+	public static ArrayList<MigrateData> getCorrespondData(int id_server, int max_pool_server) {
+		ArrayList<MigrateData> ret = new ArrayList<MigrateData>();		
+		
+		int min_data = id_server * max_pool_server;
+		int max_data = ((id_server + 1) * max_pool_server)-1;
+
+		Enumeration<String> enumKey = database.keys();
+		while(enumKey.hasMoreElements()) { //enumerate nama tabel database
+			String keyElm = enumKey.nextElement();
+			System.out.println("[MIGRATE DEBUG] "+keyElm);
+
+			ArrayList<Data> elmData = database.get(keyElm);
+			int i=0;
+			while (i < elmData.size()) {
+				Data D = elmData.get(i);
+				if (((D.Token < min_data) || (D.Token > max_data)) && (D.Token != -1)) { //jika token diluar range server skrg
+					System.out.println("[SELECTED MIGRATE DEBUG] "+D.getAllData()); //debug
+					ret.add(new MigrateData(keyElm, D.Key, D.Value ,D.TimeStamp ,D.isPrint, D.Token)); //masukin ke data migrate
+					elmData.remove(i); //data dihapus dari database disini (karena akan dipindahkan dan diluar range)
+				} else i++; //naikkan iterasi apabila tidak ada yang akan dihapus
+			}
+		}
+		return ret;
+	}
 }
 
 class Data {
@@ -110,20 +136,31 @@ class Data {
 		return (new Timestamp(date.getTime())).toString();
 	}
 
-	public Data(String Key, String Value) {
-		this.Key = Key;
-		this.Value = Value;
-		this.TimeStamp = this.currentTimeStamp();
-		this.isPrint = true;
-	}
-
 	public Data(String Key, String Value, String tm) {
 		this.Key = Key;
 		this.Value = Value;
 		this.TimeStamp = tm;
 		this.isPrint = false;
+		this.Token = -1;
+	}
+
+	public Data(String Key, String Value, int Token) {
+		this.Key = Key;
+		this.Value = Value;
+		this.Token = Token;
+		this.isPrint = true;
+		this.TimeStamp = this.currentTimeStamp();
+	}
+
+	public Data(String Key, String Value, String TimeStamp, boolean isPrint, int Token) {
+		this.Key = Key;
+		this.Value = Value;
+		this.Token = Token;
+		this.TimeStamp = TimeStamp;
+		this.Token = Token;
 	}
 
 	public void setNoPrint(){this.isPrint = false;}
 	public String getData(){return "<"+Key+","+Value+","+TimeStamp+">";}
+	public String getAllData(){return "<"+Key+","+Value+","+TimeStamp+",HASH-"+Token+">";}
 }

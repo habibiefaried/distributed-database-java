@@ -16,10 +16,12 @@ class ServerData {
 public class ListServer {
 	private static ArrayList<ServerData> SD;
 	private static Integer top;
+	public static boolean onMigration;
 
 	public ListServer() {
 		top = 0;
 		SD = new ArrayList<ServerData>();
+		onMigration = false;
 	}
 
 	public static void addServer(Protokol P, int Token) {
@@ -31,6 +33,7 @@ public class ListServer {
 	public static Protokol getProtokolServer(int i){return SD.get(i).P;}
 
 	public static ArrayList<ServerData> getAllServer(){return SD;}
+	public static ServerData getServer(int i){return SD.get(i);}
 
 	public static Integer getTop(){return top;}
 	public static void deleteServer(int i){SD.remove(i);}

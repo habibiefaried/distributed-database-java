@@ -12,8 +12,8 @@ Status :
 
 Strategi migrasi
 
-1) getAllDatabase dari salah satu server saja()
-2) create table terus2an untuk datanode yang baru
+1) getAllDatabase dari salah satu server saja() (UDAH)
+2) create table terus2an untuk datanode yang baru (UDAH)
 3) kirim max_pool_server ke datanode
 4) Cek semua token, apakah sudah sesuai dengan pool_server
 5) Jika data sesuai, diamkan saja
@@ -23,6 +23,7 @@ Strategi migrasi
 
 Internal Command :
 1) DATABASE GET -> get all database
+2) DATA <ID_SERVER> <MAX_POOL_SERVER> -> ambil beberapa data yang akan dimigrasi
 
 --->
 Jika anda menemukan teks ini. berarti checkpoint dari tubes ini adalah commit sebelum ini (karena ini masih error itu fault tolerance & detection)
