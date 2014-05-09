@@ -37,7 +37,7 @@ public class trackerc {
 	private String operateDatabase(String command, Protokol P) {
 		ArrayList<String> commands = new ArrayList<String>();
 		System.out.println("DataNode> "+command);
-		for (String retval: command.split(" ",5)){
+		for (String retval: command.split(" ",8)){
 			commands.add(retval);
 		}	
 				
@@ -70,6 +70,9 @@ public class trackerc {
 		} else if (commands.get(0).equals("DATA")) {
 			P.sendMigrateData(Struktur.getCorrespondData(Integer.parseInt(commands.get(1)),Integer.parseInt(commands.get(2))));
 			return "OK";
+		} else if (commands.get(0).equals("MIGRATE")) {
+			if (Struktur.insertMigratedData(commands.get(1),commands.get(2),commands.get(3),Integer.parseInt(commands.get(4)),commands.get(5),Boolean.parseBoolean(commands.get(6)))) return "OK";
+			else return "keanehan lol :v";
 		}
 		else return "COMMAND-NOT-RECOGNIZED";
 	}

@@ -58,7 +58,7 @@ public class Protokol {
 				r = recv();
 				if (isInteger(r)) break;
 			}
-			System.out.println("[DEBUG recv] "+r);
+			//System.out.println("[DEBUG recv] "+r);
 			Integer jmlData = Integer.parseInt(r); //terima dulu brp data yang dikirim
 			
 			ArrayList<MigrateData> allData = new ArrayList<MigrateData>();
@@ -90,7 +90,7 @@ public class Protokol {
 		String r = "0"; //nilai default
 		while (true) { //penanganan apabila ada data yang "bocor"
 			r = recv(); //terima data
-			System.out.println("[DEBUG recvRepeatMessage()] "+r);
+			//System.out.println("[DEBUG recvRepeatMessage()] "+r);
 			if (r == "NULL") break; //berarti ada yang putus
 			if (isInteger(r)) break;
 		}
@@ -98,7 +98,7 @@ public class Protokol {
 		Integer jmlData = Integer.parseInt(r); //terima dulu brp data yang dikirim
 		for (int i=0;i<jmlData;i++) {
 			String pesan = recv();
-			System.out.println("[DEBUG recvRepeatMessage()] "+pesan);
+			//System.out.println("[DEBUG recvRepeatMessage()] "+pesan);
 			Messages.add(pesan);
 		}
 		return Messages;
@@ -108,11 +108,11 @@ public class Protokol {
 		if (Messages != null) {
 			send(new Integer(Messages.size()).toString()); //kirim dulu brp jumlah data yang dikirim
 			for (int i = 0; i < Messages.size(); i++) {
-				System.out.println("[DEBUG sendRepeatMessage()] "+Messages.get(i));
+				//System.out.println("[DEBUG sendRepeatMessage()] "+Messages.get(i));
 				send(Messages.get(i));
 			}
 		} else send("0"); //jika null, maka 0
-		System.out.println("[DEBUG sendRepeatMessage()] Selesai mengirim semua");
+		//System.out.println("[DEBUG sendRepeatMessage()] Selesai mengirim semua");
 	}
 }
 

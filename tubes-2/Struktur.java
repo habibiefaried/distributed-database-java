@@ -50,6 +50,21 @@ public class Struktur {
 		}
 	}
 
+	public static boolean insertMigratedData(String table, String Key, String Value,int Token,String TimeStamp, boolean isPrint) {
+		//Insert data khusus migrate
+		ArrayList<Data> D = database.get(table);
+		if (Key.equals("0")) return false;
+		else {
+			if (D == null) return false; //masih tidak ada table
+			else {
+				replaceKeyExists(table,Key); //coba kalo ada key doble
+				D.add(new Data(Key,Value,TimeStamp,isPrint,Token));
+				database.put(table,D);
+				return true;
+			}
+		}
+	}
+
 	public static ArrayList<Data> getAllDataFromTable(String table) {
 		//System.out.println("Contents : "+database.get(table));
 		return database.get(table);

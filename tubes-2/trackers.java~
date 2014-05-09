@@ -66,9 +66,9 @@ public class trackers extends Thread {
 			int pool_server = (Integer) (maximum_data / ListServer.getJmlServer()); //misal maximum_data 10, jml server = 2. maka masing-masing nampung 5	
 			P.send("DATA "+i+" "+pool_server);
 			md.addAll(P.recvMigrateData()); //tambahin semua data
-			System.out.println("[MoveDataTo Debug] Iterate :)");
+			//System.out.println("[MoveDataTo Debug] Iterate :)");
 		}
-		System.out.println("[MoveDataTo Debug] Ini pesan berhasil :)");
+		//System.out.println("[MoveDataTo Debug] Ini pesan berhasil :)");
 	}
 
 	private void CopyAllTableTo(Protokol newServer) {
@@ -86,9 +86,9 @@ public class trackers extends Thread {
 		for (int i=0;i<alltable.size();i++) {
 			newServer.send("create table "+alltable.get(i)); //send command
 			String ok = newServer.recv();
-			System.out.println("Table Copy debug : "+ok);
+			//System.out.println("Table Copy debug : "+ok);
 		}
-		System.out.println("[DEBUG CopyAllTableTo] Selesai");
+		//System.out.println("[DEBUG CopyAllTableTo] Selesai");
 	}
 
 	private int getRandomToken() {
@@ -99,7 +99,7 @@ public class trackers extends Thread {
 			//apabila token sudah ada (isContains, maka random terus hingga ketemu)
 			number = randomGenerator.nextInt(maximum_data);
 		}
-		System.out.println("Nomor Token : "+number);
+		//System.out.println("Nomor Token : "+number);
 		return number;
 	}
 
@@ -109,7 +109,7 @@ public class trackers extends Thread {
 		int id_server=0; //defaultnya di 0
 		int JmlServer = ListServer.getJmlServer();
 		int pool_server = (Integer) (maximum_data / JmlServer); //misal maximum_data 10, jml server = 2. maka masing-masing nampung 5
-		System.out.println("Pool Server : "+pool_server);
+		//System.out.println("Pool Server : "+pool_server);
 		/* Cara kerja 
 		   Misalkan Token ID Data = 9. Iterate dari pool_server dari ID paling kecil, apakah memenuhi syarat
 		   (ID_Server+1) * pool_server > ID Data. Jika iya, maka itu yang akan bertanggung jawab
@@ -183,16 +183,13 @@ public class trackers extends Thread {
 				for (int i = 0; i < ListServer.getJmlServer(); i++) {
 					Protokol P = ListServer.getProtokolServer(i); //ambil protokol
 					P.send(command); //send command
-					System.out.println("LOL");
 					ArrayList<String> resp = P.repeatedRecv();
-					System.out.println("LOL Selesai");
 					allResp.addAll(resp);
 					System.out.println(P.recv()); //terima data tambahan doang
 				}
 				Client.send("REPEAT");
 				Client.sendRepeatMessage(allResp); //meneruskan ke client
 				//Client.send("DONE"); //meneruskan ke client
-				System.out.println("[DEBUG Trackers] Selesai mengirimkan display ke user");
 			}
 
 		} else if (commands.get(0).equals("display_all")) {
@@ -215,7 +212,6 @@ public class trackers extends Thread {
 				Client.send("REPEAT");
 				Client.sendRepeatMessage(allResp); //meneruskan ke client
 				//Client.send("DONE"); //meneruskan ke client
-				System.out.println("[DEBUG Trackers] Selesai mengirimkan display ke user");
 			}
 		} else Client.send("False Command");
 	}
@@ -223,7 +219,6 @@ public class trackers extends Thread {
 	private int checkDataExists(String key, String table) {
 		//mengembalikan id server yang memiliki data yang sama
 		//mengembalikan -1 apabila tidak ada server yang memiliki data tsb
-		System.out.println(ListServer.getJmlServer());
 		for (int i = 0; i < ListServer.getJmlServer(); i++) {
 			
 			Protokol P = ListServer.getProtokolServer(i);
@@ -231,7 +226,7 @@ public class trackers extends Thread {
 			String re = P.recv();
 			if (re.equals("NULL")) System.out.println("Disconnect msg from datanode-"+i); //fault detection
 			else {
-				System.out.println("Reply : "+re+". Data = "+key+"-"+table);
+				//System.out.println("Reply : "+re+". Data = "+key+"-"+table);
 				if (re.equals("TRUE")) return i; //jika ada maka mengembalikan id server
 			}
 		}
