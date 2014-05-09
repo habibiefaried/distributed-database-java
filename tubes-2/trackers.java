@@ -69,6 +69,15 @@ public class trackers extends Thread {
 			//System.out.println("[MoveDataTo Debug] Iterate :)");
 		}
 		//System.out.println("[MoveDataTo Debug] Ini pesan berhasil :)");
+
+		/* Masukan data */
+		for (int i=0;i<md.size();i++) {
+			MigrateData MD = md.get(i);
+			String query = "MIGRATE "+MD.Nama_Tabel+" "+MD.Key+" "+MD.Value+" "+MD.Token+" "+MD.TimeStamp+" "+MD.isPrint;
+			System.out.println("[DEBUG Penyebaran] "+query);
+			newServer.send(query);
+			System.out.println("[Balasan Query Migrasi] "+newServer.recv());
+		}
 	}
 
 	private void CopyAllTableTo(Protokol newServer) {

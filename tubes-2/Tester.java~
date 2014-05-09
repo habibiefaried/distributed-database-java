@@ -47,7 +47,7 @@ public class Tester {
 		} else if (a == 3) {
 			reader.nextLine();
 			System.out.print("IP Address server : "); String IP = reader.nextLine();
-			Client C = new Client(IP);
+			Client C = new Client(IP,true);
 		}
 	}
 }

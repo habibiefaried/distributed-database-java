@@ -50,7 +50,7 @@ public class Struktur {
 		}
 	}
 
-	public static boolean insertMigratedData(String table, String Key, String Value,Integer Token,String TimeStamp, boolean isPrint) {
+	public static boolean insertMigratedData(String table, String Key, String Value,int Token,String TimeStamp, boolean isPrint) {
 		//Insert data khusus migrate
 		ArrayList<Data> D = database.get(table);
 		if (Key.equals("0")) return false;
