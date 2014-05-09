@@ -56,6 +56,7 @@ public class Protokol {
 			String r;
 			while (true) { //penanganan apabila ada data yang "bocor"
 				r = recv();
+				if (r == "NULL") {r = "0"; break;}
 				if (isInteger(r)) break;
 			}
 			//System.out.println("[DEBUG recv] "+r);
@@ -91,7 +92,7 @@ public class Protokol {
 		while (true) { //penanganan apabila ada data yang "bocor"
 			r = recv(); //terima data
 			//System.out.println("[DEBUG recvRepeatMessage()] "+r);
-			if (r == "NULL") break; //berarti ada yang putus
+			if (r == "NULL") {r = "0"; break;} //berarti ada yang putus
 			if (isInteger(r)) break;
 		}
 

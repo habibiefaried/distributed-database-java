@@ -37,41 +37,41 @@ public class trackerc {
 	private String operateDatabase(String command, Protokol P) {
 		ArrayList<String> commands = new ArrayList<String>();
 		System.out.println("DataNode> "+command);
-		for (String retval: command.split(" ",8)){
+		for (String retval: command.split(" ",7)){
 			commands.add(retval);
 		}	
 				
 		if (commands.get(0).equals("create")) {
 			if (commands.size() != 3) return "FALSE-COMMAND"; //command tidak sesuai
 			else {
-				if (Struktur.createTable(commands.get(2))) return "OK"; //berhasil
+				if (Struktur.createTable(commands.get(2))) return "OK-CREATE"; //berhasil
 				else return "FALSE-EXISTS"; //sudah exists
 			}
 		} else if (commands.get(0).equals("insert")) {
 			if (commands.size() != 5) return "FALSE-COMMAND"; //command tidak sesuai
 			else {
-				if (Struktur.insertData(commands.get(1),commands.get(2),commands.get(3),Integer.parseInt(commands.get(4)))) return "OK"; //OK
+				if (Struktur.insertData(commands.get(1),commands.get(2),commands.get(3),Integer.parseInt(commands.get(4)))) return "OK-INSERT"; //OK
 				else return "FALSE-NO-TABLE/KEY-NOT-VALID"; //tidak ada tabel atau key invalid ( > 0)
 			}		
 		}
 		else if (commands.get(0).equals("display")) {
 			if (commands.size() != 2) return "FALSE-COMMAND"; //salah command
-			else { P.sendRepeatMessage(Struktur.getAllDataFromTableStr(commands.get(1),false)); return "OK"; } //ambil data dari tabel
+			else { P.sendRepeatMessage(Struktur.getAllDataFromTableStr(commands.get(1),false)); return "OK-DISPLAY"; } //ambil data dari tabel
 		}
 		else if (commands.get(0).equals("display_all")) {
 			if (commands.size() != 2) return "FALSE-COMMAND"; //salah command
-			else { P.sendRepeatMessage(Struktur.getAllDataFromTableStr(commands.get(1),true)); return "OK"; } //ambil data dari tabel
+			else { P.sendRepeatMessage(Struktur.getAllDataFromTableStr(commands.get(1),true)); return "OK-DISPLAY-ALL"; } //ambil data dari tabel
 		} else if (commands.get(0).equals("isExists")) {
 			if (Struktur.isExists(commands.get(1),commands.get(2))) return "TRUE";
 			else return "FALSE";
 		} else if (commands.get(0).equals("DATABASE")) {
 			P.sendRepeatMessage(Struktur.getAllTable()); //kirim semua tabel
-			return "";
+			return "OK-DATABASE";
 		} else if (commands.get(0).equals("DATA")) {
 			P.sendMigrateData(Struktur.getCorrespondData(Integer.parseInt(commands.get(1)),Integer.parseInt(commands.get(2))));
-			return "OK";
+			return "OK-DATA";
 		} else if (commands.get(0).equals("MIGRATE")) {
-			if (Struktur.insertMigratedData(commands.get(1),commands.get(2),commands.get(3),Integer.parseInt(commands.get(4)),commands.get(5),Boolean.parseBoolean(commands.get(6)))) return "OK";
+			if (Struktur.insertMigratedData(commands.get(1),commands.get(2),commands.get(3),Integer.parseInt(commands.get(4)),Boolean.parseBoolean(commands.get(5)),commands.get(6))) return "OK-MIGRATE";
 			else return "keanehan lol :v";
 		}
 		else return "COMMAND-NOT-RECOGNIZED";

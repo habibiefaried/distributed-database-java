@@ -50,8 +50,9 @@ public class Struktur {
 		}
 	}
 
-	public static boolean insertMigratedData(String table, String Key, String Value,int Token,String TimeStamp, boolean isPrint) {
+	public static boolean insertMigratedData(String table, String Key, String Value,int Token, boolean isPrint, String TimeStamp) {
 		//Insert data khusus migrate
+		System.out.println("table : "+table+" Key : "+Key+" Value = "+Value+" Token = "+Token+" isPrint = "+isPrint+" TimeStamp = ");
 		ArrayList<Data> D = database.get(table);
 		if (Key.equals("0")) return false;
 		else {
@@ -173,9 +174,10 @@ class Data {
 		this.Token = Token;
 		this.TimeStamp = TimeStamp;
 		this.Token = Token;
+		this.isPrint = isPrint;
 	}
 
 	public void setNoPrint(){this.isPrint = false;}
 	public String getData(){return "<"+Key+","+Value+","+TimeStamp+">";}
-	public String getAllData(){return "<"+Key+","+Value+","+TimeStamp+",HASH-"+Token+">";}
+	public String getAllData(){return "<"+Key+","+Value+","+TimeStamp+",HASH-"+Token+","+isPrint+">";}
 }

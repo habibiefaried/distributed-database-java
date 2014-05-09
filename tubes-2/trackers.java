@@ -13,7 +13,7 @@ public class trackers extends Thread {
 // ini merupakan namenode
 	private ServerSocket serverSocket;
 	private Protokol P;
-	private int maximum_data = 10; //hanya bisa menyimpan 10 data biar keliatan
+	private int maximum_data = 2048; //agar tidak kebanyakan, maksimum data hanya dibuat 2048 data
 	private ArrayList<Integer> usedToken;
 
 	private void debugList(ArrayList<String> AS) {
@@ -66,14 +66,14 @@ public class trackers extends Thread {
 			int pool_server = (Integer) (maximum_data / ListServer.getJmlServer()); //misal maximum_data 10, jml server = 2. maka masing-masing nampung 5	
 			P.send("DATA "+i+" "+pool_server);
 			md.addAll(P.recvMigrateData()); //tambahin semua data
-			//System.out.println("[MoveDataTo Debug] Iterate :)");
+			System.out.println("[MoveDataTo Debug] Iterate :)"+P.recv());
 		}
 		//System.out.println("[MoveDataTo Debug] Ini pesan berhasil :)");
 
 		/* Masukan data */
 		for (int i=0;i<md.size();i++) {
 			MigrateData MD = md.get(i);
-			String query = "MIGRATE "+MD.Nama_Tabel+" "+MD.Key+" "+MD.Value+" "+MD.Token+" "+MD.TimeStamp+" "+MD.isPrint;
+			String query = "MIGRATE "+MD.Nama_Tabel+" "+MD.Key+" "+MD.Value+" "+MD.Token+" "+MD.isPrint+" "+MD.TimeStamp;
 			System.out.println("[DEBUG Penyebaran] "+query);
 			newServer.send(query);
 			System.out.println("[Balasan Query Migrasi] "+newServer.recv());
@@ -95,7 +95,7 @@ public class trackers extends Thread {
 		for (int i=0;i<alltable.size();i++) {
 			newServer.send("create table "+alltable.get(i)); //send command
 			String ok = newServer.recv();
-			//System.out.println("Table Copy debug : "+ok);
+			System.out.println("Table Copy debug : "+ok);
 		}
 		//System.out.println("[DEBUG CopyAllTableTo] Selesai");
 	}
@@ -107,15 +107,15 @@ public class trackers extends Thread {
 		while (usedToken.contains(number)) {
 			//apabila token sudah ada (isContains, maka random terus hingga ketemu)
 			number = randomGenerator.nextInt(maximum_data);
+			System.out.println("[DEBUG] getRandomToken() "+number);
 		}
-		//System.out.println("Nomor Token : "+number);
+		System.out.println("Nomor Token Generate: "+number);
 		return number;
 	}
 
 	private int storeDataDecision(int token) {
 		//Penentuan data disimpan kemana berdasarkan token
 		//return ID Server
-		int id_server=0; //defaultnya di 0
 		int JmlServer = ListServer.getJmlServer();
 		int pool_server = (Integer) (maximum_data / JmlServer); //misal maximum_data 10, jml server = 2. maka masing-masing nampung 5
 		//System.out.println("Pool Server : "+pool_server);
@@ -147,8 +147,9 @@ public class trackers extends Thread {
 				Protokol P = ListServer.getProtokolServer(i); //ambil protokol
 				P.send(command); //send command
 				String ok = P.recv();
+				System.out.println("[DEBUG] Create : "+ok);
 				if (!ok.equals("NULL")) { //fault detection
-					if (!ok.equals("OK")) { isOK = false; error = ok;} 
+					if (!ok.equals("OK-CREATE")) { isOK = false; error = ok;} 
 				}else System.out.println("Disconnect msg from datanode-"+i);
 			}
 			if (isOK) Client.send("OK");
@@ -175,7 +176,8 @@ public class trackers extends Thread {
 				}
 				else {
 					Client.send(reply); //meneruskan ke client
-					if (reply.equals("OK") && (isDataExists==-1)) usedToken.add(token_data); //jika data ok dan bukan query update, tambahin di list
+					System.out.println("[DEBUG] Inssert "+reply);
+					if (reply.equals("OK-INSERT") && (isDataExists==-1)) usedToken.add(token_data); //jika data ok dan bukan query update, tambahin di list
 
 					System.out.println("Data disimpan di : "+server_decision);
 				}
@@ -235,7 +237,7 @@ public class trackers extends Thread {
 			String re = P.recv();
 			if (re.equals("NULL")) System.out.println("Disconnect msg from datanode-"+i); //fault detection
 			else {
-				//System.out.println("Reply : "+re+". Data = "+key+"-"+table);
+				System.out.println("Reply : "+re+". Data = "+key+"-"+table);
 				if (re.equals("TRUE")) return i; //jika ada maka mengembalikan id server
 			}
 		}

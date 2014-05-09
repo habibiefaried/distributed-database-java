@@ -8,7 +8,7 @@ Status :
 1) UDAH
 2) UDAH
 3) UDAH
-4) BELUM
+4) UDAH
 
 Strategi migrasi
 
@@ -27,3 +27,15 @@ Internal Command :
 
 --->
 Jika anda menemukan teks ini. berarti checkpoint dari tubes ini adalah commit sebelum ini (karena ini masih error itu fault tolerance & detection)
+
+===========
+9 Mei 2014
+
+1) konversi boolean masih kurang tepat (UDAH)
+2) setelah disconnect (pada datanode), maka terjadi error (lihat kembali fault tolerance) (UDAH)
+
+===========
+9 Mei 2014
+1) Masih bug, setelah datanode connect. putus, lalu connect lagi (error :v) -> gara2 CTRL+C pada datanode. belum dihandle namenode (UDAH)
+2) Masih bug, datanode 1..X connect dulu. skrg malah hash selalu 0 :v (Ini gara2 geser)
+

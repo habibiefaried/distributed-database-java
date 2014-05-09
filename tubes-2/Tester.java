@@ -26,7 +26,7 @@ public class Tester {
 		printTest(S.getAllDataFromTable("ghabibie"));
 		*/
 		Scanner reader = new Scanner(System.in);
-		System.out.println("1. NameNode, 2. DataNode, 3. Client");
+		System.out.println("1. NameNode, 2. DataNode, 3. Client dengan Unit Test, 4. Client tanpa unit test");
 		System.out.print("Silahkan masukkan kode mode program diatas : "); int a = reader.nextInt();
 		if (a == 1) {
 			try {
@@ -46,8 +46,13 @@ public class Tester {
 			new trackerc(IP);
 		} else if (a == 3) {
 			reader.nextLine();
+			System.out.println("Anda masuk mode unit test. unit test bisa diutakatik pada file test.txt");
 			System.out.print("IP Address server : "); String IP = reader.nextLine();
 			Client C = new Client(IP,true);
+		} else if (a == 4) {
+			reader.nextLine();
+			System.out.print("IP Address server : "); String IP = reader.nextLine();
+			Client C = new Client(IP,false);
 		}
 	}
 }
