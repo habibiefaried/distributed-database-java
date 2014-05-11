@@ -1,6 +1,6 @@
 create table habibie
-insert habibie 001 data2
-insert habibie 004 data3
+insert habibie 001 iskandar
+insert habibie 004 ihsan
 insert habibie 012 habibie
 insert habibie 014 lol
 create table lol
